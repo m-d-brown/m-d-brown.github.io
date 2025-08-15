@@ -1,13 +1,13 @@
 title: mdbrown
 email: matt@mdbrown.dev
 description: >- # this means to ignore newlines until "baseurl:"
-  Miscellany
+  Sharing minor insights
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "m-d-brown.github.io"
 github_username:  m-d-brown
 
 # Build settings
-theme: jekyll-theme-slate
+#theme: jekyll-theme-slate
 plugins:
   - jekyll-feed
 
