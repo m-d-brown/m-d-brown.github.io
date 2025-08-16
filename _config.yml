@@ -5,6 +5,7 @@ description: "Minor insights"
 #baseurl: "" # the subpath of your site, e.g. /blog
 url: "m-d-brown.github.io"
 github_username:  m-d-brown
+google_analytics: G-S5WY5QYVVJ
 
 # Build settings
 # https://github.com/pages-themes
