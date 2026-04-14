@@ -1,7 +1,7 @@
 # Test with:  bundle exec jekyll serve
-title: mdbrown
+title: mdbrown.dev
 email: matt@mdbrown.dev
-description: "Minor insights"
+description: ""
 #baseurl: "" # the subpath of your site, e.g. /blog
 #url: "m-d-brown.github.io"
 url: "https://mdbrown.dev"
