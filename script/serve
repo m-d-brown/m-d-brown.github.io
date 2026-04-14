@@ -1,19 +1,27 @@
 #!/bin/bash
 
-# site-preview script
-# Automates starting the Jekyll preview server with the correct Ruby environment.
+# site-preview script - mdbrown.dev
+PORT=${1:-4001}
 
-# 1. Path Setup
-# This project requires Ruby 4.0.2+, which is typically found in the Homebrew path on these systems.
+# 1. Environment Setup
 BREW_RUBY_BIN="/opt/homebrew/opt/ruby/bin"
-
 if [ -d "$BREW_RUBY_BIN" ]; then
     export PATH="$BREW_RUBY_BIN:$PATH"
 fi
 
-# 2. Start the Server
-# The site is configured to run on port 4001 by default to avoid conflicts.
-PORT=${1:-4001}
+# 2. Port Conflict Management
+# Check if the port is already being used (likely by a previous Jekyll session)
+EXISTING_PID=$(lsof -ti :$PORT)
+if [ ! -z "$EXISTING_PID" ]; then
+    echo "⚠️  Port $PORT is already in use by process $EXISTING_PID."
+    # We'll try to kill the existing process if it's likely a zombie Jekyll
+    kill -9 "$EXISTING_PID" 2>/dev/null
+    echo "✅ Cleared existing process."
+fi
 
-echo "Starting Jekyll preview server on port $PORT..."
-bundle exec jekyll serve --port "$PORT" --livereload
+# 3. Intelligent Preview
+echo "🚀 Starting Jekyll preview at http://127.0.0.1:$PORT/"
+# --incremental: Faster builds by only rebuilding changed files
+# --livereload: Auto-refreshes browser on file save
+# --trace: Full error logs for debugging
+bundle exec jekyll serve --port "$PORT" --livereload --incremental --trace

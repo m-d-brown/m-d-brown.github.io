@@ -1,35 +1,20 @@
-# Test with:  bundle exec jekyll serve
-title: mdbrown
+# Test with: bundle exec jekyll serve
+title: mdbrown.dev
 email: matt@mdbrown.dev
-description: "Minor insights"
-#baseurl: "" # the subpath of your site, e.g. /blog
-#url: "m-d-brown.github.io"
 url: "https://mdbrown.dev"
-github_username:  m-d-brown
+github_username: m-d-brown
 google_analytics_id: G-S5WY5QYVVJ
 
-# Build settings
-# https://github.com/pages-themes
-theme: jekyll-theme-tactile
 plugins:
-  - jekyll-feed
+  - jekyll-seo-tag
 
-# Exclude from processing.
-# The following items will not be processed, by default.
-# Any item listed under the `exclude:` key here will be automatically added to
-# the internal "default list".
-#
-# Excluded items can be processed by explicitly listing the directories or
-# their entries' file path in the `include:` list.
-#
-# exclude:
-#   - .sass-cache/
-#   - .jekyll-cache/
-#   - gemfiles/
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules/
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - script/
+  - vendor/
+  - .bundle/
+  - .ruby-lsp/
+  - .jekyll-cache/
+  - .sass-cache/

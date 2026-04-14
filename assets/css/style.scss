@@ -1,105 +1,236 @@
 ---
 ---
 
-@import "{{ site.theme }}";
+// ─── 1. Design Tokens ────────────────────────────────────────────────────────
 
-// ─── Soothing Teal Color Palette ──────────────────────────────────────────────
+// Core Palette
+$rich-cerulean: #2274a5ff;
+$alice-blue:    #e9f1f7ff;
+$orange:        #fca311ff;
+$ink-black:     #131b23ff;
+$taupe:         #816c61ff;
+
+// Semantic Roles
+$primary-text:  $ink-black;
+$background:    $alice-blue;
+$accent:        $rich-cerulean;
+$secondary:     $orange;
+$border-color:  $taupe;
+
+// Typography
+$font-sans:     'Helvetica Neue', Helvetica, Arial, sans-serif;
+$font-heading:  'Chivo', $font-sans;
+$font-code:     Monaco, "Bitstream Vera Sans Mono", monospace;
+
+// Spacing
+$spacing-unit:  1.5em;
+
+// ─── 2. Mixins ───────────────────────────────────────────────────────────────
+
+@mixin highlighter($color: $secondary, $opacity: 0.35, $height: 70%) {
+  display: table;
+  background: linear-gradient(180deg, transparent $height, rgba($color, $opacity) $height);
+  padding-right: 10px;
+}
+
+// ─── 3. Base & Reset ─────────────────────────────────────────────────────────
+
+@import url('https://fonts.googleapis.com/css?family=Chivo:900');
+
+*, *:before, *:after { box-sizing: border-box; }
+
+html, body, div, span, h1, h2, h3, h4, h5, h6, p, blockquote, pre, 
+a, img, ul, ol, li, table, tbody, tfoot, thead, tr, th, td, 
+article, aside, footer, header, nav, section {
+  margin: 0; padding: 0; border: 0; font: inherit; vertical-align: baseline;
+}
+
+body {
+  line-height: 1.5;
+  font-family: $font-sans;
+  background: $background;
+  color: $primary-text;
+  font-size: 1em;
+}
 
 a {
-  color: #2c7a7b;
-  transition: color 0.2s ease;
-}
-
-a:hover {
-  color: #234e52;
-  text-decoration: underline;
-}
-
-// h3 uses red in Tactile — override to match teal
-h3 {
-  color: #2c7a7b !important;
-}
-
-// Keep header title dark (not red)
-header a {
-  color: #303030;
-}
-
-header a:hover {
-  color: #2c7a7b;
+  color: $accent;
   text-decoration: none;
+  transition: color 0.15s ease-in-out;
+  &:hover { color: $primary-text; text-decoration: underline; }
 }
 
-// ─── Text Contrast ────────────────────────────────────────────────────────────
+// ─── 4. Layout ───────────────────────────────────────────────────────────────
 
-// Tactile defaults to #6d6d6d which is too light — darken for readability
-body {
-  color: #3a3a3a;
-  text-shadow: none; // Remove the white text-shadow that makes text look washed out
-}
-
-p {
-  color: #3a3a3a;
-}
-
-// ─── Unified Card Box (wraps header + content together) ───────────────────────
-
-// Apply the card to the .inner container so it wraps header + main content
 .inner {
-  width: 745px; // ~20% wider than the theme default of 620px
-  background: rgba(0, 0, 0, 0.034);
-  border-radius: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.07);
-  box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.05),
-    0 8px 24px -4px rgba(0, 0, 0, 0.08);
-  overflow: hidden; // ensure border-radius clips the background image
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 80px;
+  border-left: 1px dotted rgba($border-color, 0.20);
+  border-right: 1px dotted rgba($border-color, 0.20);
 }
 
-// Add breathing room above the card
-#container {
-  padding-top: 28px;
-}
-
-// Tighten up the header padding — less empty space under the title
 header {
-  padding-top: 22px;
-  padding-bottom: 10px;
-  padding-left: 40px;
-  padding-right: 40px;
+  padding: 25px 0 25px;
+  h1 {
+    font-family: $font-heading;
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    a {
+      color: $primary-text;
+      @include highlighter($secondary, 0.9, 60%);
+      padding-left: 15px;
+      padding-right: 15px;
+      &:hover {
+        color: $primary-text;
+        @include highlighter($accent, 0.9, 60%);
+        text-decoration: none;
+      }
+    }
+  }
+  h2 {
+    font-size: 24px;
+    color: $secondary;
+    letter-spacing: -1px;
+    margin-top: 5px;
+  }
 }
 
-// Collapse the empty space from the downloads section when empty
-#downloads {
-  margin-bottom: 0;
-}
+#container { min-height: 595px; }
 
-// Reduce thickness of the separator gap
-hr {
-  margin-top: 0.4em;
-  padding-bottom: 0.6em;
-  margin-left: 40px;
-  margin-right: 40px;
-}
-
-// Main content area
 #main_content {
-  padding: 20px 40px 36px;
-  line-height: 1.7;
+  padding-top: 20px;
+
+  // Document Structure
+  p, ul, ol, blockquote, pre, table, dl {
+    margin-bottom: $spacing-unit;
+  }
+
+  // Headings
+  h1, h2, h3, h4, h5, h6 {
+    @include highlighter($secondary, 0.35);
+    margin-bottom: 0.5em;
+  }
+  h2 { margin-top: 1.5em; }
+  h3 { margin-top: 1.25em; }
+  h1 { font-size: 32px; font-weight: 900; }
+  h2 { font-size: 24px; font-weight: bold; }
+  h3 { font-size: 20px; font-weight: bold; }
+
+  // Lists
+  ul, ol {
+    padding-left: 30px;
+    li { margin-bottom: 0.25em; }
+  }
+  ul { list-style-type: disc; }
+  ol { list-style-type: decimal; }
+  
+  // Tables
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    th, td { padding: 12px; border: 1px solid rgba($border-color, 0.3); }
+    th { background: rgba($secondary, 0.05); text-align: left; font-weight: bold; }
+  }
 }
 
 footer {
-  padding-left: 40px;
-  padding-right: 40px;
+  margin-top: 40px;
+  padding: 20px 0 30px;
+  font-size: 13px;
+  color: $secondary;
+  a { color: $accent; }
 }
 
-// ─── List Alignment ───────────────────────────────────────────────────────────
+// ─── 5. Components ───────────────────────────────────────────────────────────
 
-// Tactile uses list-style-position: inside which collapses indentation.
-// Switch to outside so the bullet marker sits in the left margin properly.
-ul li,
-ol li {
-  list-style-position: outside;
-  margin-left: 1.5em;
+a.button {
+  display: inline-block;
+  padding: 12px 20px;
+  margin: 0 14px 14px 0;
+  font-size: 15px;
+  font-weight: bold;
+  color: $primary-text;
+  background: $background;
+  border: 1px solid $border-color;
+  border-radius: 30px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+  &:hover {
+    background: $secondary;
+    border-color: $primary-text;
+    text-decoration: none;
+  }
 }
 
+blockquote {
+  padding-left: 30px;
+  font-size: 1.25em;
+  font-style: italic;
+  border-left: 5px solid $secondary;
+}
+
+hr {
+  width: 75%;
+  //max-width: 400px;
+  height: 1px;
+  margin: 1.5em auto;
+  background: rgba($border-color, 0.4);
+  border: none;
+}
+
+// Tighten header separator
+#downloads + hr {
+  margin-top: 0.5em;
+  margin-bottom: 1.5em;
+}
+
+// ─── 6. Code & Syntax ────────────────────────────────────────────────────────
+
+code, pre {
+  font-family: $font-code;
+  font-size: 14px;
+}
+
+code {
+  padding: 2px 5px;
+  background: rgba(0,0,0,0.06);
+  border-radius: 3px;
+}
+
+pre {
+  padding: 20px;
+  background: $primary-text;
+  color: #f8f8f8;
+  border-radius: 8px;
+  overflow: auto;
+  code { background: transparent; padding: 0; }
+}
+
+// Syntax Highlighting (Rouge)
+.highlight {
+  color: #d0d0d0;
+  .c, .cd, .cm, .c1, .cs { color: #888; }
+  .k, .kn, .kp, .kr, .kv { color: #aa759f; }
+  .s, .sb, .sc, .sd, .s2, .sh, .sx, .s1 { color: #90a959; }
+  .nc, .no, .nn, .nt, .cp { color: #f4bf75; }
+  .m, .mf, .mh, .mi, .il, .mo, .mb, .mx, .ss { color: #90a959; }
+  .o, .ow, .p, .pi { color: #d0d0d0; }
+  .kt, .kd, .kc { color: #d28445; }
+  .na, .gh { color: #6a9fb5; }
+  .gi { color: #90a959; }
+  .gd { color: #ac4142; }
+}
+
+// ─── 7. Responsive ───────────────────────────────────────────────────────────
+
+@media only screen and (max-width: 767px) {
+  .inner { padding: 0 20px; width: 100%; border: none; }
+  header {
+    h1 { font-size: 36px; }
+    h2 { font-size: 18px; }
+  }
+  #main_content {
+    h1 { font-size: 28px; }
+  }
+}
