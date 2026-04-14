@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# site-preview script
+# Automates starting the Jekyll preview server with the correct Ruby environment.
+
+# 1. Path Setup
+# This project requires Ruby 4.0.2+, which is typically found in the Homebrew path on these systems.
+BREW_RUBY_BIN="/opt/homebrew/opt/ruby/bin"
+
+if [ -d "$BREW_RUBY_BIN" ]; then
+    export PATH="$BREW_RUBY_BIN:$PATH"
+fi
+
+# 2. Start the Server
+# The site is configured to run on port 4001 by default to avoid conflicts.
+PORT=${1:-4001}
+
+echo "Starting Jekyll preview server on port $PORT..."
+bundle exec jekyll serve --port "$PORT" --livereload
