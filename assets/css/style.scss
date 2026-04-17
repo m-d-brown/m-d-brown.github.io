@@ -63,15 +63,15 @@ a {
 // ─── 4. Layout ───────────────────────────────────────────────────────────────
 
 .inner {
-  max-width: 820px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 0 40px;
-  border-left: 1px solid rgba($border-color, 0.15);
-  border-right: 1px solid rgba($border-color, 0.15);
+  padding: 0 80px;
+  border-left: 1px dotted rgba($border-color, 0.20);
+  border-right: 1px dotted rgba($border-color, 0.20);
 }
 
 header {
-  padding: 35px 0 25px;
+  padding: 25px 0 25px;
   h1 {
     font-family: $font-heading;
     font-size: 48px;
@@ -79,11 +79,12 @@ header {
     letter-spacing: -1px;
     a {
       color: $primary-text;
-      @include highlighter($secondary, 0.9, 70%);
+      @include highlighter($secondary, 0.9, 60%);
+      padding-left: 15px;
       padding-right: 15px;
       &:hover {
-        color: $accent;
-        @include highlighter($accent, 0.9, 70%);
+        color: $primary-text;
+        @include highlighter($accent, 0.9, 60%);
         text-decoration: none;
       }
     }
@@ -108,7 +109,7 @@ header {
 
   // Headings
   h1, h2, h3, h4, h5, h6 {
-    @include highlighter($secondary, 0.35, 70%);
+    @include highlighter($secondary, 0.35);
     margin-bottom: 0.5em;
   }
   h2 { margin-top: 1.5em; }
@@ -137,7 +138,6 @@ header {
 footer {
   margin-top: 40px;
   padding: 20px 0 30px;
-  border-top: 1px solid $border-color;
   font-size: 13px;
   color: $secondary;
   a { color: $accent; }
@@ -171,10 +171,18 @@ blockquote {
 }
 
 hr {
+  width: 75%;
+  //max-width: 400px;
   height: 1px;
-  margin: 2.5em 0;
-  background: rgba($border-color, 0.3);
+  margin: 1.5em auto;
+  background: rgba($border-color, 0.4);
   border: none;
+}
+
+// Tighten header separator
+#downloads + hr {
+  margin-top: 0.5em;
+  margin-bottom: 1.5em;
 }
 
 // ─── 6. Code & Syntax ────────────────────────────────────────────────────────
