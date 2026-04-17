@@ -1,7 +1,6 @@
 ---
 layout: default
-title: Style Guide
-permalink: /style/
+title: Style Test
 ---
 
 Text can be **bold**, _italic_, or ~~strikethrough~~.
