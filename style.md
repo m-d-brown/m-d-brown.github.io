@@ -100,7 +100,7 @@ end
 
 ### Large image
 
-![Branching](https://guides.github.com/activities/hello-world/branching.png)
+![Technical Architecture Diagram](/assets/img/style-test.png)
 
 ### Definition lists can be used with HTML syntax.
 
@@ -117,6 +117,31 @@ end
 
 ```
 Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this.
+```
+
+This is marked-up code:
+
+```yaml
+automation:
+...
+- id: "turn-on-ac"
+  alias: Turn on AC cooling when temperature is high
+  # Turn on above 78 degrees F.
+  triggers:
+    - type: temperature
+      entity_id: sensor.room_temperature
+      domain: sensor
+      above: 78
+      trigger: device
+  condition: []
+  actions:
+    - metadata: {}
+      data:
+        duration: 00:30:00
+      target:
+        entity_id: timer.cooling_timer
+      action: timer.start
+  mode: single
 ```
 
 ```
