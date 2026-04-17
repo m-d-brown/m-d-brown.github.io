@@ -1,0 +1,10 @@
+/* Print styles (Placeholder) */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  .button, #footer {
+    display: none;
+  }
+}

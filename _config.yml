@@ -5,14 +5,14 @@ description: ""
 #baseurl: "" # the subpath of your site, e.g. /blog
 #url: "m-d-brown.github.io"
 url: "https://mdbrown.dev"
-github_username:  m-d-brown
+github_username: m-d-brown
 google_analytics_id: G-S5WY5QYVVJ
 
 # Build settings
 # https://github.com/pages-themes
-theme: jekyll-theme-tactile
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
 
 # Exclude from processing.
 # The following items will not be processed, by default.
