@@ -1,0 +1,48 @@
+# Taskfile.yml - Modern task runner for the m-d-brown.github.io repo
+# Documentation: https://taskfile.dev
+
+version: "3"
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list
+
+  venv:
+    desc: "Create the virtual environment if it doesn't exist"
+    internal: true
+    status:
+      - test -d .venv
+    cmds:
+      - python3 -m venv .venv
+      - ./.venv/bin/pip install --upgrade pip
+
+  install-deps:
+    desc: "Install Python dependencies and pre-commit hooks"
+    deps: [venv]
+    sources:
+      - requirements.txt
+    generates:
+      - .venv/bin/pre-commit
+    cmds:
+      - ./.venv/bin/pip install -r requirements.txt
+      - ./.venv/bin/pre-commit install
+    silent: true
+
+  lint:
+    desc: "Run all linters and formatters on all files"
+    deps: [install-deps]
+    cmds:
+      - ./.venv/bin/pre-commit run --all-files
+
+  lint-staged:
+    desc: "Run linters on staged files only (used by hooks)"
+    deps: [install-deps]
+    cmds:
+      - ./.venv/bin/pre-commit run
+
+  preview:
+    desc: "Start Jekyll local preview server"
+    cmds:
+      - ./script/serve

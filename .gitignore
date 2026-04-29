@@ -5,3 +5,5 @@ _site
 Gemfile.lock
 vendor
 .worktrees/
+.venv/
+.task/

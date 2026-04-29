@@ -13,10 +13,16 @@ fi
 # Check if the port is already being used (likely by a previous Jekyll session)
 EXISTING_PID=$(lsof -ti :$PORT)
 if [ ! -z "$EXISTING_PID" ]; then
-    echo "⚠️  Port $PORT is already in use by process $EXISTING_PID."
     # We'll try to kill the existing process if it's likely a zombie Jekyll
-    kill -9 "$EXISTING_PID" 2>/dev/null
-    echo "✅ Cleared existing process."
+    echo "$EXISTING_PID" | xargs kill -9 2>/dev/null
+    echo "✅ Cleared existing process on port $PORT."
+fi
+
+# Check if the livereload port is already being used
+LIVERELOAD_PID=$(lsof -ti :35729)
+if [ ! -z "$LIVERELOAD_PID" ]; then
+    echo "$LIVERELOAD_PID" | xargs kill -9 2>/dev/null
+    echo "✅ Cleared existing livereload process on port 35729."
 fi
 
 # 3. Intelligent Preview

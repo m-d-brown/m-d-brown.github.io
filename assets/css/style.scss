@@ -39,8 +39,8 @@ $spacing-unit:  1.5em;
 
 *, *:before, *:after { box-sizing: border-box; }
 
-html, body, div, span, h1, h2, h3, h4, h5, h6, p, blockquote, pre, 
-a, img, ul, ol, li, table, tbody, tfoot, thead, tr, th, td, 
+html, body, div, span, h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, img, ul, ol, li, table, tbody, tfoot, thead, tr, th, td,
 article, aside, footer, header, nav, section {
   margin: 0; padding: 0; border: 0; font: inherit; vertical-align: baseline;
 }
@@ -125,7 +125,7 @@ header {
   }
   ul { list-style-type: disc; }
   ol { list-style-type: decimal; }
-  
+
   // Tables
   table {
     width: 100%;
