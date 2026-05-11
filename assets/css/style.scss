@@ -133,6 +133,17 @@ header {
     th, td { padding: 12px; border: 1px solid rgba($border-color, 0.3); }
     th { background: rgba($secondary, 0.05); text-align: left; font-weight: bold; }
   }
+
+  // Images
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 2em auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba($border-color, 0.1);
+  }
 }
 
 footer {
