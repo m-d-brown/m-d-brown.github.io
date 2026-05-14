@@ -1,6 +1,6 @@
 ---
-layout: default
-title: "Breville Barista Express — Remove and Lubricate Steam/Hot Water Knob"
+title:
+  "Breville Barista Express — Remove and lubricate the steam/hot water knob"
 ---
 
 # Breville Barista Express — Remove and lubricate the steam/hot water knob

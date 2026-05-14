@@ -1,0 +1,51 @@
+---
+import '../styles/global.scss';
+import '../styles/print.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const siteTitle = 'mdbrown.dev';
+const pageTitle = title ? `${title} — ${siteTitle}` : siteTitle;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+---
+
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>{pageTitle}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonicalURL} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    {description && <meta property="og:description" content={description} />}
+  </head>
+  <body>
+    <div id="container">
+      <div class="inner">
+        <header>
+          <h1><a href="/">{siteTitle}</a></h1>
+        </header>
+
+        <hr />
+        <section id="main_content">
+          <slot />
+        </section>
+
+        <hr />
+        <footer>
+          <a href="https://github.com/m-d-brown" class="github-link"
+            >github.com/m-d-brown</a
+          >
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>

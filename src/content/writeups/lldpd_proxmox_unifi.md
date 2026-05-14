@@ -1,5 +1,5 @@
 ---
-layout: default
+title: "Improving Unifi operability with Proxmox using lldp"
 ---
 
 # Improving Unifi operability with Proxmox using lldp

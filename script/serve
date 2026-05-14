@@ -1,33 +1,14 @@
 #!/bin/bash
+# Astro local preview server - mdbrown.dev
 
-# site-preview script - mdbrown.dev
 PORT=${1:-4001}
 
-# 1. Environment Setup
-BREW_RUBY_BIN="/opt/homebrew/opt/ruby/bin"
-if [ -d "$BREW_RUBY_BIN" ]; then
-    export PATH="$BREW_RUBY_BIN:$PATH"
-fi
-
-# 2. Port Conflict Management
-# Check if the port is already being used (likely by a previous Jekyll session)
+# Clear any existing process on the chosen port
 EXISTING_PID=$(lsof -ti :$PORT)
 if [ ! -z "$EXISTING_PID" ]; then
-    # We'll try to kill the existing process if it's likely a zombie Jekyll
     echo "$EXISTING_PID" | xargs kill -9 2>/dev/null
-    echo "✅ Cleared existing process on port $PORT."
+    echo "Cleared existing process on port $PORT."
 fi
 
-# Check if the livereload port is already being used
-LIVERELOAD_PID=$(lsof -ti :35729)
-if [ ! -z "$LIVERELOAD_PID" ]; then
-    echo "$LIVERELOAD_PID" | xargs kill -9 2>/dev/null
-    echo "✅ Cleared existing livereload process on port 35729."
-fi
-
-# 3. Intelligent Preview
-echo "🚀 Starting Jekyll preview at http://127.0.0.1:$PORT/"
-# --incremental: Faster builds by only rebuilding changed files
-# --livereload: Auto-refreshes browser on file save
-# --trace: Full error logs for debugging
-bundle exec jekyll serve --port "$PORT" --livereload --incremental --trace
+echo "Starting Astro dev server at http://127.0.0.1:$PORT/"
+exec npm run dev -- --port "$PORT"
