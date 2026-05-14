@@ -1,5 +1,7 @@
 ---
-layout: default
+title:
+  "One-way control of a 'dumb' air conditioner via an IR controller, with Home
+  Assistant"
 ---
 
 # Home Assistant control of a dumb A/C unit

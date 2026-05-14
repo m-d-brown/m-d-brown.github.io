@@ -1,9 +1,9 @@
-_site
-.sass-cache
-.jekyll-cache
-.jekyll-metadata
-Gemfile.lock
-vendor
+dist/
+node_modules/
+.astro/
 .worktrees/
 .venv/
 .task/
+.env
+.env.*
+!.env.example

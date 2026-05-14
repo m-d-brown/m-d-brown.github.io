@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import Default from '../layouts/Default.astro';
+
+const writeups = await getCollection('writeups');
+writeups.sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+
+<Default
+  description="Writeups by Matt Brown on home automation, networking, and other tinkering."
+>
+  <p>
+    With the hope that they might help others, I've written up a few solutions
+    to problems I've faced:
+  </p>
+  <ul>
+    {
+      writeups.map((w) => (
+        <li>
+          <a href={`/${w.id}`}>{w.data.title}</a>
+        </li>
+      ))
+    }
+  </ul>
+</Default>

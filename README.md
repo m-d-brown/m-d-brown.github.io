@@ -1,51 +1,112 @@
 # mdbrown.dev
 
-Home page for <https://github.com/m-d-brown>.
+Personal site at <https://mdbrown.dev> — an index of writeups on home
+automation, networking, and other tinkering.
 
-## Architecture & Deployment
+## Stack
 
-This site has been modernized to use **GitHub Actions** for deployment instead
-of the legacy GitHub Pages builder. This allows for:
+- **[Astro](https://astro.build) 5** — static site generator. Outputs plain
+  HTML, ships zero JS by default.
+- **Markdown** content via Astro's
+  [content collections](https://docs.astro.build/en/guides/content-collections/).
+- **SCSS** for styling (single file, `src/styles/global.scss`).
+- **[Shiki](https://shiki.style)** (Astro built-in) for syntax highlighting,
+  theme `github-dark`. Configured in [astro.config.mjs](astro.config.mjs).
+- **GitHub Pages** for hosting, deployed via GitHub Actions.
+- **Cloudflare** in front of the domain. Web Analytics is enabled via
+  Cloudflare's **Automatic Setup** (HTML rewriting at the edge) — no analytics
+  script in this repo.
 
-- **Ruby 4.0+ Compatibility**: Local development on newer Ruby versions (like
-  Ruby 4.0.2).
-- **Custom Gems**: Use of standard Jekyll gems and plugins without the
-  restrictions of the `github-pages` meta-gem.
+## Layout
 
-### Deployment Process
+```
+.
+├── astro.config.mjs                # site URL, Shiki theme, build format
+├── package.json                    # npm scripts: dev, build, preview
+├── src/
+│   ├── content.config.ts           # `writeups` collection schema (zod)
+│   ├── content/writeups/*.md       # one markdown file per writeup
+│   ├── layouts/Default.astro       # shared layout (head, header, footer)
+│   ├── pages/
+│   │   ├── index.astro             # home page; auto-lists writeups
+│   │   ├── [slug].astro            # dynamic route → renders each writeup
+│   │   └── style.md                # markdown style-test page
+│   └── styles/
+│       ├── global.scss
+│       └── print.css
+├── public/                         # copied verbatim into the build output
+│   ├── CNAME                       # GitHub Pages custom domain
+│   └── assets/img/                 # images referenced from posts
+└── .github/workflows/pages.yml     # build + deploy via withastro/action
+```
 
-The site is automatically built and deployed via the workflow in
-[pages.yml](.github/workflows/pages.yml).
+## URL conventions
 
-> [!IMPORTANT] To enable this, the repository settings must be configured:
-> **Settings** -> **Pages** -> **Build and deployment** -> **Source** -> Change
-> to **"GitHub Actions"**.
+- Filename in `src/content/writeups/` is the slug. `home_assistant_dumb_ac.md` →
+  `/home_assistant_dumb_ac`.
+- `build.format: 'file'` in [astro.config.mjs](astro.config.mjs) keeps URLs
+  matching the old Jekyll output (`/foo.html`, served extensionless by GitHub
+  Pages). **Do not change this** — it preserves inbound links.
 
-### Local Development
+## Local development
 
-To test the site locally:
+Prerequisites: Node 20+ (we use 26), npm 10+.
 
-1. **Ruby Version**: This project is compatible with Ruby 4.0.2+.
-2. **Standard Gems**: The `Gemfile` uses the standard `jekyll` gem. Note that
-   some gems like `logger`, `base64`, and `bigdecimal` are explicitly included
-   to maintain compatibility with Ruby 4.0's removed standard libraries.
+```bash
+npm install           # one-time, or after pulling new deps
+npm run dev           # dev server with hot reload, default port 4321
+npm run build         # produces ./dist/
+npm run preview       # serves ./dist/ for a final smoke-test
+```
 
-#### Commands
+Or via the Taskfile (also installs npm deps lazily):
 
-1. Install dependencies:
+```bash
+task preview          # runs `npm run dev`
+task build            # runs `npm run build`
+```
 
-   ```bash
-   export PATH="/opt/homebrew/opt/ruby/bin:$PATH" # If using Homebrew Ruby
-   bundle install
+[script/serve](script/serve) is a thin wrapper that kills any stale process on
+the port before starting `npm run dev` — handy if you switch branches.
+
+### Adding a writeup
+
+1. Create `src/content/writeups/<slug>.md` with frontmatter:
+   ```yaml
+   ---
+   title: "Display title for this writeup"
+   ---
    ```
+2. Write markdown. Images go in `public/assets/img/<slug>/` and are referenced
+   as `/assets/img/<slug>/foo.jpg`.
+3. The home page picks up the new entry automatically — no edit to
+   [src/pages/index.astro](src/pages/index.astro) needed. (Entries are sorted by
+   title.)
 
-2. Run the Jekyll server:
-   ```bash
-   bundle exec jekyll serve --port 4001
-   ```
+### Adding a one-off page (not a writeup)
 
-The site will be available at `http://127.0.0.1:4001/`.
+Drop a `.md` or `.astro` file in `src/pages/`. See
+[src/pages/style.md](src/pages/style.md) for the markdown form — it uses
+`layout: ../layouts/Default.astro` in frontmatter.
 
-## Github Guidance
+## Deployment
 
-https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll
+Pushes to `main` trigger
+[.github/workflows/pages.yml](.github/workflows/pages.yml), which runs
+`withastro/action@v3` and publishes via `actions/deploy-pages@v4`.
+
+> [!IMPORTANT] Repo Settings → Pages → Source must be **"GitHub Actions"** (not
+> "Deploy from a branch").
+
+## Linting
+
+Pre-commit handles markdown / yaml / json formatting via
+[.pre-commit-config.yaml](.pre-commit-config.yaml). Python venv is created
+lazily by `task install-deps`.
+
+## Useful references
+
+- Astro docs: <https://docs.astro.build>
+- Content collections: <https://docs.astro.build/en/guides/content-collections/>
+- Shiki themes: <https://shiki.style/themes>
+- GitHub Pages + Astro: <https://docs.astro.build/en/guides/deploy/github/>

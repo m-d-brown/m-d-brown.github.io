@@ -30,6 +30,17 @@ tasks:
       - ./.venv/bin/pre-commit install
     silent: true
 
+  install-node-deps:
+    desc: "Install Node dependencies for the Astro site"
+    sources:
+      - package.json
+      - package-lock.json
+    generates:
+      - node_modules/.package-lock.json
+    cmds:
+      - npm install
+    silent: true
+
   lint:
     desc: "Run all linters and formatters on all files"
     deps: [install-deps]
@@ -43,6 +54,13 @@ tasks:
       - ./.venv/bin/pre-commit run
 
   preview:
-    desc: "Start Jekyll local preview server"
+    desc: "Start Astro local preview server"
+    deps: [install-node-deps]
     cmds:
-      - ./script/serve
+      - npm run dev
+
+  build:
+    desc: "Build the production site to ./dist"
+    deps: [install-node-deps]
+    cmds:
+      - npm run build
