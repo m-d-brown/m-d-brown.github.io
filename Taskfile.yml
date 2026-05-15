@@ -64,3 +64,11 @@ tasks:
     deps: [install-node-deps]
     cmds:
       - npm run build
+
+  ci-build:
+    desc:
+      "Reproduce the CI build locally (clean install + build; engine-strict
+      enforces Node version)"
+    cmds:
+      - npm ci
+      - npm run build
