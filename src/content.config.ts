@@ -5,6 +5,7 @@ const writeups = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/writeups' }),
   schema: z.object({
     title: z.string(),
+    date: z.coerce.date(),
     description: z.string().optional(),
   }),
 });

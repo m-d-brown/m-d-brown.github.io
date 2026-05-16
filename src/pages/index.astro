@@ -3,7 +3,14 @@ import { getCollection } from 'astro:content';
 import Default from '../layouts/Default.astro';
 
 const writeups = await getCollection('writeups');
-writeups.sort((a, b) => a.data.title.localeCompare(b.data.title));
+writeups.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const fmt = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
 ---
 
 <Default
@@ -13,10 +20,13 @@ writeups.sort((a, b) => a.data.title.localeCompare(b.data.title));
     With the hope that they might help others, I've written up a few solutions
     to problems I've faced:
   </p>
-  <ul>
+  <ul class="post-list">
     {
       writeups.map((w) => (
         <li>
+          <time datetime={w.data.date.toISOString().slice(0, 10)}>
+            {fmt.format(w.data.date)}
+          </time>
           <a href={`/${w.id}`}>{w.data.title}</a>
         </li>
       ))

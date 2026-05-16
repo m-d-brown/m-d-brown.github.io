@@ -1,6 +1,7 @@
 ---
 title:
   "Breville Barista Express — Remove and lubricate the steam/hot water knob"
+date: 2026-05-10
 ---
 
 # Breville Barista Express — Remove and lubricate the steam/hot water knob

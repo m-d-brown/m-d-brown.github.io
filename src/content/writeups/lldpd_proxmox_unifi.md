@@ -1,5 +1,6 @@
 ---
 title: "Improving Unifi operability with Proxmox using lldp"
+date: 2026-04-29
 ---
 
 # Improving Unifi operability with Proxmox using lldp

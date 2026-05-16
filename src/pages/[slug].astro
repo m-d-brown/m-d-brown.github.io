@@ -12,8 +12,19 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+
+const fmt = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
+const isoDate = entry.data.date.toISOString().slice(0, 10);
 ---
 
 <Default title={entry.data.title} description={entry.data.description}>
+  <p class="post-date">
+    <time datetime={isoDate}>{fmt.format(entry.data.date)}</time>
+  </p>
   <Content />
 </Default>

@@ -75,13 +75,17 @@ the port before starting `npm run dev` — handy if you switch branches.
    ```yaml
    ---
    title: "Display title for this writeup"
+   date: 2026-05-14
    ---
    ```
+   `date` is required and must be a real date (YYYY-MM-DD). The schema in
+   [src/content.config.ts](src/content.config.ts) enforces it; the build fails
+   if it's missing or malformed.
 2. Write markdown. Images go in `public/assets/img/<slug>/` and are referenced
    as `/assets/img/<slug>/foo.jpg`.
 3. The home page picks up the new entry automatically — no edit to
-   [src/pages/index.astro](src/pages/index.astro) needed. (Entries are sorted by
-   title.)
+   [src/pages/index.astro](src/pages/index.astro) needed. Entries are sorted by
+   `date` descending (newest first).
 
 ### Adding a one-off page (not a writeup)
 

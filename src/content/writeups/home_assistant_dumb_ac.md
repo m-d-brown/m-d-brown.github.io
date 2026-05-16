@@ -2,6 +2,7 @@
 title:
   "One-way control of a 'dumb' air conditioner via an IR controller, with Home
   Assistant"
+date: 2025-08-14
 ---
 
 # Home Assistant control of a dumb A/C unit
