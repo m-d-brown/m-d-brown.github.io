@@ -1,10 +1,10 @@
 ---
 title:
-  "Breville Barista Express — Remove and lubricate the steam/hot water knob"
+  "Breville Barista Express — Removing and lubricating the steam/hot water knob"
 date: 2026-05-10
 ---
 
-# Breville Barista Express — Remove and lubricate the steam/hot water knob
+# Breville Barista Express — Removing and lubricating the steam/hot water knob
 
 The steam/hot water selector knob on the right side of the Breville Barista
 Express often becomes stiff and difficult to turn. Lubricating the internal
