@@ -9,10 +9,16 @@ interface Props {
   description?: string;
   /** Set on writeups. Its presence switches og:type to "article". */
   publishedTime?: Date;
+  /** Absolute path to an already-processed lead image, for og:image. */
+  imagePath?: string;
+  /** JSON-LD to embed. Serialized as-is into an ld+json script tag. */
+  schema?: Record<string, unknown>;
 }
 
-const { title, seoTitle, description, publishedTime } = Astro.props;
+const { title, seoTitle, description, publishedTime, imagePath, schema } =
+  Astro.props;
 const siteTitle = 'mdbrown.dev';
+const author = 'Matt Brown';
 
 // Append the site name only when the result still fits an untruncated search
 // result (~60 chars). Long titles spend that budget on the title itself.
@@ -31,6 +37,9 @@ const path = Astro.url.pathname
   .replace(/index\.html$/, '')
   .replace(/\.html$/, '');
 const canonicalURL = new URL(path, Astro.site).toString();
+const imageURL = imagePath
+  ? new URL(imagePath, Astro.site).toString()
+  : undefined;
 ---
 
 <!DOCTYPE html>
@@ -41,13 +50,28 @@ const canonicalURL = new URL(path, Astro.site).toString();
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>{pageTitle}</title>
     {description && <meta name="description" content={description} />}
+    <meta name="author" content={author} />
     <link rel="canonical" href={canonicalURL} />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/assets/fonts/chivo-900-latin.woff2"
+      crossorigin
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={siteTitle}
+      href={new URL('rss.xml', Astro.site).toString()}
+    />
 
     <meta property="og:title" content={pageTitle} />
     <meta property="og:type" content={publishedTime ? 'article' : 'website'} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:site_name" content={siteTitle} />
     {description && <meta property="og:description" content={description} />}
+    {imageURL && <meta property="og:image" content={imageURL} />}
     {
       publishedTime && (
         <meta
@@ -56,7 +80,19 @@ const canonicalURL = new URL(path, Astro.site).toString();
         />
       )
     }
-    <meta name="twitter:card" content="summary" />
+    <meta
+      name="twitter:card"
+      content={imageURL ? 'summary_large_image' : 'summary'}
+    />
+
+    {
+      schema && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(schema)}
+        />
+      )
+    }
   </head>
   <body>
     <div id="container">
@@ -72,6 +108,8 @@ const canonicalURL = new URL(path, Astro.site).toString();
 
         <hr />
         <footer>
+          <a href="/about">About</a> ·
+          <a href="/rss.xml">RSS</a> ·
           <a href="https://github.com/m-d-brown" class="github-link"
             >github.com/m-d-brown</a
           >

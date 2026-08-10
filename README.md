@@ -26,17 +26,22 @@ automation, networking, and other tinkering.
 ├── src/
 │   ├── content.config.ts           # `writeups` collection schema (zod)
 │   ├── content/writeups/*.md       # one markdown file per writeup
-│   ├── layouts/Default.astro       # shared layout (head, header, footer)
+│   ├── content/writeups/images/    # post images; optimized by Astro
+│   ├── layouts/Default.astro       # shared layout (head, meta, JSON-LD)
 │   ├── pages/
 │   │   ├── index.astro             # home page; auto-lists writeups
 │   │   ├── [slug].astro            # dynamic route → renders each writeup
+│   │   ├── about.astro             # author page (referenced by JSON-LD)
+│   │   ├── 404.astro               # not-found page
+│   │   ├── rss.xml.js              # RSS feed
 │   │   └── style.md                # markdown style-test page
 │   └── styles/
 │       ├── global.scss
 │       └── print.css
 ├── public/                         # copied verbatim into the build output
 │   ├── CNAME                       # GitHub Pages custom domain
-│   └── assets/img/                 # images referenced from posts
+│   ├── robots.txt                  # points crawlers at the sitemap
+│   └── assets/fonts/               # self-hosted Chivo subset
 └── .github/workflows/pages.yml     # build + deploy via withastro/action
 ```
 
@@ -93,9 +98,14 @@ the port before starting `npm run dev` — handy if you switch branches.
 2. Write markdown, starting at the first paragraph. **Don't open the file with
    an `# H1`** — [src/pages/\[slug\].astro](src/pages/[slug].astro) renders the
    `title` frontmatter as the page's single `<h1>`. Body headings start at `##`.
-   Images go in `public/assets/img/<slug>/` and are referenced as
-   `/assets/img/<slug>/foo.jpg`.
-3. The home page picks up the new entry automatically — no edit to
+   Images go in `src/content/writeups/images/<slug>/` and are referenced
+   **relatively** (`./images/<slug>/foo.jpg`) so Astro optimizes them —
+   converting to WebP and emitting `width`/`height` and `loading="lazy"`. Paths
+   under `/assets/img/` are copied verbatim and skip all of that.
+3. Optionally set `image:` in frontmatter to a relative path (usually the post's
+   first photo). It becomes the `og:image` link-preview card and the `image` in
+   the page's JSON-LD.
+4. The home page picks up the new entry automatically — no edit to
    [src/pages/index.astro](src/pages/index.astro) needed. Entries are sorted by
    `date` descending (newest first).
 

@@ -3,6 +3,7 @@ title:
   "Breville Barista Express — Removing and lubricating the steam/hot water knob"
 seoTitle: "Breville Barista Express: fixing a stiff steam knob"
 date: 2026-05-10
+image: "./images/breville-knob/1-knob.jpg"
 description:
   "The steam and hot water knob on a Breville Barista Express gets stiff over
   time. A photo guide to pulling it off and lubricating the valve in minutes."
@@ -29,7 +30,7 @@ The steam/hot water selector knob is on the right side of the machine. It
 rotates between three positions: **steam** (steam icon, left), **standby**
 (center), and **hot water** (water drop icon, right).
 
-![The steam/hot water selector knob on the right side of the Breville Barista Express, shown in the standby position](/assets/img/breville-knob/1-knob.jpg)
+![The steam/hot water selector knob on the right side of the Breville Barista Express, shown in the standby position](./images/breville-knob/1-knob.jpg)
 
 Pull the knob directly outward, perpendicular to the side of the machine. You
 will need to pull **very firmly** — the knob has an internal spring clip that
@@ -37,12 +38,12 @@ must release. You may need to wiggle the knob side-to-side slightly as you pull
 outward. For more leverage, grip with a soft tool like a quick clamp with rubber
 pads as shown below.
 
-![Using a quick clamp with rubber pads to grip and pull the knob straight off the machine](/assets/img/breville-knob/2-remove.jpg)
+![Using a quick clamp with rubber pads to grip and pull the knob straight off the machine](./images/breville-knob/2-remove.jpg)
 
 For reference, the inside of the knob has a square plastic coupler that mates
 with the valve stem.
 
-![The inside of the removed knob, showing the square plastic coupling mechanism and mounting screws](/assets/img/breville-knob/3-knob-interior.jpg)
+![The inside of the removed knob, showing the square plastic coupling mechanism and mounting screws](./images/breville-knob/3-knob-interior.jpg)
 
 ### Step 2 — Apply lubricant
 
@@ -50,13 +51,13 @@ With the knob removed you can see the valve assembly. The red arrows in the
 photo below point to the **outer ring of the selector** — this is where you
 should apply lubricant.
 
-![The valve assembly with the knob removed. Red arrows point to the outer ring seal where buildup causes friction](/assets/img/breville-knob/4-valve-assembly.jpg)
+![The valve assembly with the knob removed. Red arrows point to the outer ring seal where buildup causes friction](./images/breville-knob/4-valve-assembly.jpg)
 
 Using a needle-nose applicator, apply lubricant **behind the outer ring of the
 selector**. I used
 [Super Lube Synthetic Oil](https://www.super-lube.com/synthetic-oil).
 
-![A bottle of Super Lube Synthetic Oil with a needle-tip applicator](/assets/img/breville-knob/5-lubricant.jpg)
+![A bottle of Super Lube Synthetic Oil with a needle-tip applicator](./images/breville-knob/5-lubricant.jpg)
 
 Turn the selector manually to work the lubricant into the mechanism. The
 receiver is 3/8", so a **3/8" drive ratchet** will make it easy to turn back and

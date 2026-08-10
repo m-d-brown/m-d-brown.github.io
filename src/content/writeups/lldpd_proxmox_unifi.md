@@ -2,6 +2,7 @@
 title: "Improving Unifi operability with Proxmox using lldp"
 seoTitle: "Fixing Unifi topology for Proxmox hosts with lldpd"
 date: 2026-04-29
+image: "./images/unifi_topology_mockup.png"
 description:
   "Unifi's topology map often misses Proxmox hosts, especially on VLAN trunks.
   Installing lldpd on each host makes the switch ports show up correctly."
@@ -81,4 +82,4 @@ With `lldpd` running on your Proxmox hosts, the Unifi Network application
 topology view should now show the Proxmox hosts as an intermediate node, with
 children VMs or containers below it.
 
-![Unifi Topology Dashboard Mockup](/assets/img/unifi_topology_mockup.png)
+![Unifi Topology Dashboard Mockup](./images/unifi_topology_mockup.png)

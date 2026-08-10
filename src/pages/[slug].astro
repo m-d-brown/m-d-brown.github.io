@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { getImage } from 'astro:assets';
 import Default from '../layouts/Default.astro';
 
 export async function getStaticPaths() {
@@ -20,6 +21,33 @@ const fmt = new Intl.DateTimeFormat('en-US', {
   timeZone: 'UTC',
 });
 const isoDate = entry.data.date.toISOString().slice(0, 10);
+
+// Run the lead image through the same pipeline as in-body images so og:image
+// points at a built asset rather than the unprocessed source.
+const lead = entry.data.image
+  ? await getImage({ src: entry.data.image, format: 'jpeg', width: 1200 })
+  : undefined;
+
+const canonical = new URL(`/${entry.id}`, Astro.site).toString();
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: entry.data.title,
+  description: entry.data.description,
+  datePublished: isoDate,
+  author: {
+    '@type': 'Person',
+    name: 'Matt Brown',
+    url: new URL('/about', Astro.site).toString(),
+  },
+  publisher: {
+    '@type': 'Person',
+    name: 'Matt Brown',
+  },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+  url: canonical,
+  ...(lead && { image: new URL(lead.src, Astro.site).toString() }),
+};
 ---
 
 <Default
@@ -27,6 +55,8 @@ const isoDate = entry.data.date.toISOString().slice(0, 10);
   seoTitle={entry.data.seoTitle}
   description={entry.data.description}
   publishedTime={entry.data.date}
+  imagePath={lead?.src}
+  schema={schema}
 >
   <h1>{entry.data.title}</h1>
   <p class="post-date">

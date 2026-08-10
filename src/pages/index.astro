@@ -11,11 +11,26 @@ const fmt = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
   timeZone: 'UTC',
 });
+
+// `name` here is one of the inputs Google uses for the site name shown in
+// search results, alongside og:site_name.
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'mdbrown.dev',
+  url: Astro.site?.toString(),
+  author: {
+    '@type': 'Person',
+    name: 'Matt Brown',
+    url: new URL('/about', Astro.site).toString(),
+  },
+};
 ---
 
 <Default
   seoTitle="mdbrown.dev — homelab, networking, and repair writeups"
   description="Writeups by Matt Brown on home automation, networking, and repair."
+  schema={schema}
 >
   <h1>Writeups</h1>
   <p>

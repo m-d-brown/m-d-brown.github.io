@@ -1,0 +1,32 @@
+---
+import Default from '../layouts/Default.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  mainEntity: {
+    '@type': 'Person',
+    name: 'Matt Brown',
+    url: new URL('/about', Astro.site).toString(),
+    sameAs: ['https://github.com/m-d-brown'],
+  },
+};
+---
+
+<Default
+  title="About"
+  description="About Matt Brown and mdbrown.dev — writeups on home automation, networking, and repairs, written up from problems actually solved."
+  schema={schema}
+>
+  <h1>About</h1>
+  <p>
+    Solutions to problems I've run into, in enough detail that someone hitting
+    the same problem can solve it too.
+  </p>
+  <p>
+    Software engineer at Google, working on compute infrastructure.
+  </p>
+  <p>
+    <a href="https://github.com/m-d-brown">github.com/m-d-brown</a>
+  </p>
+</Default>
