@@ -1,9 +1,11 @@
 ---
 title: "Improving Unifi operability with Proxmox using lldp"
+seoTitle: "Fixing Unifi topology for Proxmox hosts with lldpd"
 date: 2026-04-29
+description:
+  "Unifi's topology map often misses Proxmox hosts, especially on VLAN trunks.
+  Installing lldpd on each host makes the switch ports show up correctly."
 ---
-
-# Improving Unifi operability with Proxmox using lldp
 
 If you run Proxmox and use Unifi networking equipment you might have noticed
 that Unifi's topology map doesn't always accurately show which switch ports your

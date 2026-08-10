@@ -69,7 +69,8 @@ a {
 
 header {
   padding: 25px 0 25px;
-  h1 {
+  // Not an <h1>: the page's single <h1> belongs to the page's own title.
+  .site-title {
     font-family: $font-heading;
     font-size: 48px;
     font-weight: 900;
@@ -253,7 +254,7 @@ pre {
 @media only screen and (max-width: 767px) {
   .inner { padding: 0 20px; width: 100%; border: none; }
   header {
-    h1 { font-size: 36px; }
+    .site-title { font-size: 36px; }
     h2 { font-size: 18px; }
   }
   #main_content {

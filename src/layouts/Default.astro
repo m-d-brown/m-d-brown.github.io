@@ -4,13 +4,33 @@ import '../styles/print.css';
 
 interface Props {
   title?: string;
+  /** Short form of `title`, used only for the <title> tag. */
+  seoTitle?: string;
   description?: string;
+  /** Set on writeups. Its presence switches og:type to "article". */
+  publishedTime?: Date;
 }
 
-const { title, description } = Astro.props;
+const { title, seoTitle, description, publishedTime } = Astro.props;
 const siteTitle = 'mdbrown.dev';
-const pageTitle = title ? `${title} — ${siteTitle}` : siteTitle;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+
+// Append the site name only when the result still fits an untruncated search
+// result (~60 chars). Long titles spend that budget on the title itself.
+const base = seoTitle ?? title;
+const withSuffix = `${base} — ${siteTitle}`;
+const pageTitle = !base
+  ? siteTitle
+  : withSuffix.length <= 60
+    ? withSuffix
+    : base;
+
+// `build.format: 'file'` makes pathname "/foo.html", but every internal link
+// points at "/foo". GitHub Pages serves both, so canonicalize on the
+// extensionless form to keep the two spellings from competing.
+const path = Astro.url.pathname
+  .replace(/index\.html$/, '')
+  .replace(/\.html$/, '');
+const canonicalURL = new URL(path, Astro.site).toString();
 ---
 
 <!DOCTYPE html>
@@ -22,16 +42,27 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
     <title>{pageTitle}</title>
     {description && <meta name="description" content={description} />}
     <link rel="canonical" href={canonicalURL} />
+
     <meta property="og:title" content={pageTitle} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={publishedTime ? 'article' : 'website'} />
     <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content={siteTitle} />
     {description && <meta property="og:description" content={description} />}
+    {
+      publishedTime && (
+        <meta
+          property="article:published_time"
+          content={publishedTime.toISOString()}
+        />
+      )
+    }
+    <meta name="twitter:card" content="summary" />
   </head>
   <body>
     <div id="container">
       <div class="inner">
         <header>
-          <h1><a href="/">{siteTitle}</a></h1>
+          <div class="site-title"><a href="/">{siteTitle}</a></div>
         </header>
 
         <hr />

@@ -72,17 +72,29 @@ the port before starting `npm run dev` — handy if you switch branches.
 ### Adding a writeup
 
 1. Create `src/content/writeups/<slug>.md` with frontmatter:
+
    ```yaml
    ---
    title: "Display title for this writeup"
    date: 2026-05-14
+   description:
+     "50–165 characters. Becomes the search-result snippet and the link preview
+     text, so write it for a human deciding whether to click."
+   seoTitle: "Short title, ≤60 chars" # optional
    ---
    ```
-   `date` is required and must be a real date (YYYY-MM-DD). The schema in
-   [src/content.config.ts](src/content.config.ts) enforces it; the build fails
-   if it's missing or malformed.
-2. Write markdown. Images go in `public/assets/img/<slug>/` and are referenced
-   as `/assets/img/<slug>/foo.jpg`.
+
+   `date` is required and must be a real date (YYYY-MM-DD). `description` is
+   also required — without one, search engines invent the snippet. `seoTitle` is
+   optional: set it when `title` is too long to survive truncation in search
+   results. The schema in [src/content.config.ts](src/content.config.ts)
+   enforces all of this; the build fails if a field is missing or malformed.
+
+2. Write markdown, starting at the first paragraph. **Don't open the file with
+   an `# H1`** — [src/pages/\[slug\].astro](src/pages/[slug].astro) renders the
+   `title` frontmatter as the page's single `<h1>`. Body headings start at `##`.
+   Images go in `public/assets/img/<slug>/` and are referenced as
+   `/assets/img/<slug>/foo.jpg`.
 3. The home page picks up the new entry automatically — no edit to
    [src/pages/index.astro](src/pages/index.astro) needed. Entries are sorted by
    `date` descending (newest first).

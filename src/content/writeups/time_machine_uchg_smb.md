@@ -1,9 +1,11 @@
 ---
 title: "Repairing a corrupted Time Machine volume over SMB"
+seoTitle: "Repair a corrupted Time Machine sparsebundle"
 date: 2026-08-08
+description:
+  "Time Machine backups to an SMB NAS failing to attach? A uchg flag left by an
+  interrupted backup can block every repair. How I found and cleared it."
 ---
-
-# Repairing a corrupted Time Machine volume over SMB
 
 These are notes about Time Machine backups to a NAS over SMB suddenly failing,
 and what I did to try to fix it. **Attempting to fix it took far longer than it

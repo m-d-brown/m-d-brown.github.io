@@ -2,10 +2,12 @@
 title:
   "One-way control of a 'dumb' air conditioner via an IR controller, with Home
   Assistant"
+seoTitle: "Control a dumb A/C with Home Assistant and an IR blaster"
 date: 2025-08-14
+description:
+  "How to switch a dumb mini-split on and off from Home Assistant with only an
+  IR blaster and a temperature sensor, using a timer to track the A/C state."
 ---
-
-# Home Assistant control of a dumb A/C unit
 
 This is a guide to turning on and off a "dumb" A/C unit using only an IR blaster
 controller and a temperature sensor. This is a challenge because a "dumb" unit
