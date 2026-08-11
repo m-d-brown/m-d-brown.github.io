@@ -33,7 +33,7 @@ for (const file of readdirSync(WRITEUPS)) {
     frontmatter.match(/^updated:\s*"?(\d{4}-\d{2}-\d{2})/m) ??
     frontmatter.match(/^date:\s*"?(\d{4}-\d{2}-\d{2})/m)
   )?.[1];
-  // Filename is the slug: time_machine_uchg_smb.md -> time_machine_uchg_smb.
+  // Filename is the slug: lldpd_proxmox_unifi.md -> lldpd_proxmox_unifi.
   if (stamp) lastmodBySlug.set(file.replace(/\.md$/, ''), stamp);
 }
 
@@ -49,7 +49,7 @@ export default defineConfig({
       filter: (page) => !/\/style(\.html)?$/.test(page),
       // Runs once per sitemap entry, and is where the table above gets used.
       serialize: (item) => {
-        // https://mdbrown.dev/time_machine_uchg_smb -> time_machine_uchg_smb
+        // https://mdbrown.dev/lldpd_proxmox_unifi -> lldpd_proxmox_unifi
         const slug = new URL(item.url).pathname.replace(/^\/|\/$/g, '');
         const stamp = lastmodBySlug.get(slug);
         // Non-writeups (/, /about) aren't in the table and get no lastmod,
