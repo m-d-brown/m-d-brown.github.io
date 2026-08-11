@@ -13,10 +13,17 @@ interface Props {
   imagePath?: string;
   /** JSON-LD to embed. Serialized as-is into an ld+json script tag. */
   schema?: Record<string, unknown>;
+  /** Keep this page out of search indexes. */
+  noindex?: boolean;
+  /** Set by Astro for markdown pages using `layout:` — see below. */
+  frontmatter?: Record<string, any>;
 }
 
-const { title, seoTitle, description, publishedTime, imagePath, schema } =
-  Astro.props;
+// Markdown pages in src/pages/ hand their frontmatter to the layout as a single
+// `frontmatter` object rather than as individual props, so fall back to it.
+const p = { ...Astro.props.frontmatter, ...Astro.props };
+const { title, seoTitle, description, publishedTime, imagePath, schema } = p;
+const noindex = p.noindex ?? false;
 const siteTitle = 'mdbrown.dev';
 const author = 'Matt Brown';
 
@@ -51,6 +58,7 @@ const imageURL = imagePath
     <title>{pageTitle}</title>
     {description && <meta name="description" content={description} />}
     <meta name="author" content={author} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonicalURL} />
     <link
       rel="preload"

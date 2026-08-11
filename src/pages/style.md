@@ -1,6 +1,10 @@
 ---
 layout: ../layouts/Default.astro
 title: Style Test
+description:
+  "A rendering test page for every markdown element this site styles. Not
+  content — kept out of search indexes and the sitemap."
+noindex: true
 ---
 
 Text can be **bold**, _italic_, or ~~strikethrough~~.
@@ -103,7 +107,7 @@ end
 
 ### Large image
 
-![Technical Architecture Diagram](/assets/img/style-test.png)
+![Technical Architecture Diagram](../assets/style-test.jpg)
 
 ### Definition lists can be used with HTML syntax.
 

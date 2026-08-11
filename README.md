@@ -5,7 +5,7 @@ automation, networking, and other tinkering.
 
 ## Stack
 
-- **[Astro](https://astro.build) 5** — static site generator. Outputs plain
+- **[Astro](https://astro.build) 6** — static site generator. Outputs plain
   HTML, ships zero JS by default.
 - **Markdown** content via Astro's
   [content collections](https://docs.astro.build/en/guides/content-collections/).
@@ -19,7 +19,7 @@ automation, networking, and other tinkering.
 
 ## Layout
 
-```
+```text
 .
 ├── astro.config.mjs                # site URL, Shiki theme, build format
 ├── package.json                    # npm scripts: dev, build, preview
@@ -86,14 +86,18 @@ the port before starting `npm run dev` — handy if you switch branches.
      "50–165 characters. Becomes the search-result snippet and the link preview
      text, so write it for a human deciding whether to click."
    seoTitle: "Short title, ≤60 chars" # optional
+   updated: 2026-06-01 # optional; set when revising a published post
    ---
    ```
 
    `date` is required and must be a real date (YYYY-MM-DD). `description` is
    also required — without one, search engines invent the snippet. `seoTitle` is
    optional: set it when `title` is too long to survive truncation in search
-   results. The schema in [src/content.config.ts](src/content.config.ts)
-   enforces all of this; the build fails if a field is missing or malformed.
+   results. `updated` is optional: set it when you revise a published post, and
+   it shows on the page, sets `dateModified` in the JSON-LD, and drives the
+   sitemap's `<lastmod>`. The schema in
+   [src/content.config.ts](src/content.config.ts) enforces all of this; the
+   build fails if a field is missing or malformed.
 
 2. Write markdown, starting at the first paragraph. **Don't open the file with
    an `# H1`** — [src/pages/\[slug\].astro](src/pages/[slug].astro) renders the

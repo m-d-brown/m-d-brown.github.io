@@ -21,6 +21,7 @@ const fmt = new Intl.DateTimeFormat('en-US', {
   timeZone: 'UTC',
 });
 const isoDate = entry.data.date.toISOString().slice(0, 10);
+const isoUpdated = entry.data.updated?.toISOString().slice(0, 10);
 
 // Run the lead image through the same pipeline as in-body images so og:image
 // points at a built asset rather than the unprocessed source.
@@ -35,6 +36,7 @@ const schema = {
   headline: entry.data.title,
   description: entry.data.description,
   datePublished: isoDate,
+  ...(isoUpdated && { dateModified: isoUpdated }),
   author: {
     '@type': 'Person',
     name: 'Matt Brown',
@@ -61,6 +63,14 @@ const schema = {
   <h1>{entry.data.title}</h1>
   <p class="post-date">
     <time datetime={isoDate}>{fmt.format(entry.data.date)}</time>
+    {
+      entry.data.updated && (
+        <>
+          {' · updated '}
+          <time datetime={isoUpdated}>{fmt.format(entry.data.updated)}</time>
+        </>
+      )
+    }
   </p>
   <Content />
 </Default>

@@ -7,6 +7,9 @@ const writeups = defineCollection({
     z.object({
       title: z.string(),
       date: z.coerce.date(),
+      // Set when a post is revised after publication. Shown on the page and
+      // used for the sitemap's <lastmod>, which is a recrawl signal.
+      updated: z.coerce.date().optional(),
       // Used for <meta name="description"> and og:description. Required: a
       // missing description means search engines invent the snippet for us.
       description: z.string().min(50).max(165),
