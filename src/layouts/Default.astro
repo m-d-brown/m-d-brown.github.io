@@ -1,7 +1,12 @@
 ---
+// Bare stylesheet imports: Astro compiles the SCSS, bundles it, and injects it
+// into every page using this layout. No <link> tag needed, and unreferenced
+// files never ship.
 import '../styles/global.scss';
 import '../styles/print.css';
 
+// Astro reads this interface to type-check the props callers pass, e.g.
+// <Default title="..." />. Editors flag typos and missing required props.
 interface Props {
   title?: string;
   /** Short form of `title`, used only for the <title> tag. */
@@ -43,6 +48,9 @@ const pageTitle = !base
 const path = Astro.url.pathname
   .replace(/index\.html$/, '')
   .replace(/\.html$/, '');
+// Astro.url is the URL of the page currently being built; Astro.site is the
+// `site` value from astro.config.mjs. Together they make absolute URLs, which
+// canonical tags and og: meta require.
 const canonicalURL = new URL(path, Astro.site).toString();
 const imageURL = imagePath
   ? new URL(imagePath, Astro.site).toString()
@@ -93,6 +101,10 @@ const imageURL = imagePath
       content={imageURL ? 'summary_large_image' : 'summary'}
     />
 
+    {/* set:html injects raw, unescaped HTML. Required here because JSON-LD
+        must reach the page as literal JSON, not HTML-escaped text. Only ever
+        pass it values we construct ourselves — user input would be an XSS
+        hole. */}
     {
       schema && (
         <script
@@ -111,6 +123,7 @@ const imageURL = imagePath
 
         <hr />
         <section id="main_content">
+          {/* Whatever a page nests inside <Default>...</Default> lands here. */}
           <slot />
         </section>
 

@@ -38,6 +38,8 @@ for (const file of readdirSync(WRITEUPS)) {
 }
 
 export default defineConfig({
+  // Read by Astro.site and used to build absolute URLs (canonical, og:, RSS,
+  // sitemap). Getting it wrong silently poisons all of them.
   site: 'https://mdbrown.dev',
   integrations: [
     // Emits extensionless URLs, which already match our internal links and
@@ -63,6 +65,10 @@ export default defineConfig({
     },
   },
   build: {
+    // 'file' emits foo.html; the default 'directory' would emit foo/index.html.
+    // Kept for parity with the old Jekyll URLs — see README. This choice is why
+    // the layout strips ".html" for canonicals and why the RSS feed sets
+    // trailingSlash: false.
     format: 'file',
   },
 });

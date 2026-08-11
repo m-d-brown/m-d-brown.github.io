@@ -2,6 +2,9 @@
 import { getCollection } from 'astro:content';
 import Default from '../layouts/Default.astro';
 
+// A file in src/pages/ becomes a route from its name: index.astro -> /.
+// getCollection returns the validated entries in no guaranteed order, so sort
+// explicitly — newest first.
 const writeups = await getCollection('writeups');
 writeups.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 

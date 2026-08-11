@@ -1,4 +1,7 @@
 ---
+# `layout:` wraps this markdown in an .astro component. Note that everything
+# else here arrives there as a single `frontmatter` object, NOT as individual
+# props — see the merge at the top of Default.astro.
 layout: ../layouts/Default.astro
 title: Style Test
 description:

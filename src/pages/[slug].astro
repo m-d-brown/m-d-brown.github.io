@@ -1,9 +1,23 @@
 ---
+// Everything between the `---` fences is the component script. It runs once at
+// BUILD time on the server and never ships to the browser, so it can read the
+// filesystem, await things, and hold data the markup below interpolates.
+//
+// The square brackets in the filename make this a dynamic route: one source
+// file that emits many pages, one per entry returned by getStaticPaths().
 import { getCollection, render } from 'astro:content';
 import { getImage } from 'astro:assets';
 import Default from '../layouts/Default.astro';
 
+// Required for dynamic routes in a static build: Astro calls this to learn
+// which pages to generate. Each returned object becomes one page.
+//   `params.slug` fills the [slug] in this file's name -> the output URL.
+//   `props`       is handed to the page below as Astro.props, so the entry
+//                 doesn't have to be looked up a second time.
 export async function getStaticPaths() {
+  // Reads every markdown file in the collection, already validated against the
+  // schema in src/content.config.ts. `entry.id` is the filename-derived slug
+  // ("time_machine_uchg_smb"); `entry.data` is the typed frontmatter.
   const writeups = await getCollection('writeups');
   return writeups.map((entry) => ({
     params: { slug: entry.id },
@@ -12,6 +26,8 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+// render() compiles the markdown body into `Content`, an Astro component that
+// gets rendered as <Content /> in the markup below.
 const { Content } = await render(entry);
 
 const fmt = new Intl.DateTimeFormat('en-US', {
@@ -23,8 +39,11 @@ const fmt = new Intl.DateTimeFormat('en-US', {
 const isoDate = entry.data.date.toISOString().slice(0, 10);
 const isoUpdated = entry.data.updated?.toISOString().slice(0, 10);
 
-// Run the lead image through the same pipeline as in-body images so og:image
-// points at a built asset rather than the unprocessed source.
+// getImage() is the programmatic form of the <Image /> component: same
+// optimization, but it returns an object (`lead.src` is the built file's path)
+// instead of an <img> tag. Meta tags need the URL string, not an element.
+// Running it here also means og:image points at a processed asset rather than
+// the original upload.
 const lead = entry.data.image
   ? await getImage({ src: entry.data.image, format: 'jpeg', width: 1200 })
   : undefined;
@@ -63,6 +82,8 @@ const schema = {
   <h1>{entry.data.title}</h1>
   <p class="post-date">
     <time datetime={isoDate}>{fmt.format(entry.data.date)}</time>
+    {/* `cond && <jsx/>` renders nothing when cond is falsy; <>...</> is a
+        fragment, grouping siblings without adding a wrapper element. */}
     {
       entry.data.updated && (
         <>
