@@ -10,11 +10,19 @@ tasks:
       - task --list
 
   venv:
-    desc: "Create the virtual environment if it doesn't exist"
+    desc: "Create the virtual environment, rebuilding it if it went stale"
     internal: true
     status:
-      - test -d .venv
+      # A venv is not relocatable: every console script in .venv/bin hardcodes
+      # its interpreter as an absolute path in the shebang. Move the checkout
+      # and those scripts all die with "no such file or directory", even though
+      # .venv/bin/python keeps working (it is a symlink to the system Python,
+      # and sys.prefix is resolved at runtime). So probing python -- or just
+      # testing that .venv exists -- would miss it. Check pip's shebang, which
+      # is present in every venv, still points into this checkout.
+      - grep -q "^#!{{.TASKFILE_DIR}}/.venv/bin/" .venv/bin/pip
     cmds:
+      - rm -rf .venv
       - python3 -m venv .venv
       - ./.venv/bin/pip install --upgrade pip
 
