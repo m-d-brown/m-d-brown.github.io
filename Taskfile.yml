@@ -9,6 +9,14 @@ tasks:
     cmds:
       - task --list
 
+  setup:
+    desc: "Set up everything needed to work on the site (Python + Node)"
+    # The pieces below are internal, so this is the one setup entry point.
+    # Nothing here is destructive on a healthy checkout: every step has a
+    # status or sources/generates check, so a second run is a no-op and
+    # `task setup` doubles as "put this checkout back in a working state".
+    deps: [install-deps, install-node-deps]
+
   venv:
     desc: "Create the virtual environment, rebuilding it if it went stale"
     internal: true
@@ -28,6 +36,7 @@ tasks:
 
   install-deps:
     desc: "Install Python dependencies and pre-commit hooks"
+    internal: true
     deps: [venv]
     sources:
       - requirements.txt
@@ -40,6 +49,7 @@ tasks:
 
   install-node-deps:
     desc: "Install Node dependencies for the Astro site"
+    internal: true
     sources:
       - package.json
       - package-lock.json
