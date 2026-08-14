@@ -61,6 +61,20 @@ tasks:
     cmds:
       - ./.venv/bin/pre-commit run
 
+  format:
+    desc: "Rewrite every file in place with the formatters (prettier et al)"
+    deps: [install-deps]
+    cmds:
+      # Every hook in .pre-commit-config.yaml is a fixer, so pre-commit edits
+      # files in place and then exits non-zero to report that it changed
+      # something. That is a failure for `lint`, but it is the entire point
+      # here -- so ignore the first pass and let a second, now clean, pass
+      # set the exit code. Anything no hook can fix fails both passes and
+      # still fails the task.
+      - cmd: ./.venv/bin/pre-commit run --all-files
+        ignore_error: true
+      - ./.venv/bin/pre-commit run --all-files
+
   preview:
     desc: "Start Astro local preview server"
     deps: [install-node-deps]
