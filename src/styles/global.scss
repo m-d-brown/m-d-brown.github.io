@@ -169,35 +169,28 @@ footer {
 .post-list {
   list-style: none !important;
   padding-left: 0 !important;
+  // Plain block flow: the title, its trailing date, and the summary are all
+  // ordinary inline/block content starting at the margin, so every entry
+  // lines up on the left without a layout mode to arrange them.
   li {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.75em;
-    margin-bottom: 0.5em !important;
+    margin-bottom: 1.75em !important;
   }
-  time {
-    flex-shrink: 0;
-    font-family: $font-code;
-    font-size: 0.85em;
+  // Inherits the list's font; only the colour sets the date apart from the
+  // title it follows. nowrap keeps the dash attached to the date, so a long
+  // title can't leave the dash stranded at the end of the line above.
+  .post-meta {
     color: $taupe;
-    min-width: 6.5em;
+    white-space: nowrap;
   }
-  // Takes the width left over after the date column, and stacks the title and
-  // summary, which is what keeps the two left-aligned with each other.
-  // `min-width: 0` lets it shrink below its content's intrinsic width, so a
-  // long title wraps instead of pushing the row wider than the page.
-  .post-entry {
-    flex: 1;
-    min-width: 0;
-  }
-  // !important for the same reason as the rules above it: `#main_content p`
-  // carries an ID and would otherwise win on specificity.
+  // Body copy: same size and colour as the rest of the page, inheriting
+  // $primary-text rather than setting a one-off tint of it. The three roles
+  // in an entry are already distinguished by the palette's own semantics --
+  // title in $accent (it is a link), date in $taupe, summary in body colour.
+  // !important because `#main_content p` carries an ID and would otherwise
+  // win on specificity and reimpose its bottom margin.
   .post-summary {
     margin: 0.15em 0 0 !important;
-    font-size: 0.9em;
     line-height: 1.45;
-    color: rgba($primary-text, 0.75);
   }
 }
 

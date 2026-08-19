@@ -8,13 +8,6 @@ import Default from '../layouts/Default.astro';
 const writeups = await getCollection('writeups');
 writeups.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-const fmt = new Intl.DateTimeFormat('en-US', {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-  timeZone: 'UTC',
-});
-
 // `name` here is one of the inputs Google uses for the site name shown in
 // search results, alongside og:site_name.
 const schema = {
@@ -51,21 +44,22 @@ const schema = {
       covers. */}
   <ul class="post-list">
     {
-      writeups.map((w) => (
-        <li>
-          <time datetime={w.data.date.toISOString().slice(0, 10)}>
-            {fmt.format(w.data.date)}
-          </time>
-          {/* Title and summary share one flex item so the summary lines up
-              under the title automatically, instead of via a left margin that
-              would have to re-derive the date column's width in the summary's
-              own (smaller) em. */}
-          <div class="post-entry">
-            <a href={`/${w.id}`}>{w.data.title}</a>
+      writeups.map((w) => {
+        // ISO 8601, which is also the format the datetime attribute wants, so
+        // the displayed text and the machine-readable value are one string.
+        const iso = w.data.date.toISOString().slice(0, 10);
+        return (
+          <li>
+            {/* Date trails the title inline rather than sitting in its own
+                column. A column has to be as wide as the longest date on
+                every row, which spent horizontal space on every entry and
+                left titles starting well right of the margin. */}
+            <a href={`/${w.id}`}>{w.data.title}</a>{' '}
+            <span class="post-meta">— <time datetime={iso}>{iso}</time></span>
             <p class="post-summary">{w.data.description}</p>
-          </div>
-        </li>
-      ))
+          </li>
+        );
+      })
     }
   </ul>
 </Default>
