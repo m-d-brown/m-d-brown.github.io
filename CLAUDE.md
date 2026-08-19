@@ -15,6 +15,10 @@ hook installation) that the bare commands skip.
 | `pre-commit run --all-files` | `task lint`    |
 | formatting files in place    | `task format`  |
 
+`task check-https` verifies the live redirect and TLS setup. That configuration
+lives in Cloudflare and GitHub Pages, not in this repo, so nothing here can
+catch a dashboard change that reverts it — run the target instead of assuming.
+
 `task --list` shows everything. `task setup` is the single setup entry point and
 is safe to re-run: every step has a status check, so a second run is a no-op.
 

@@ -1,0 +1,150 @@
+#!/bin/bash
+# Verifies the hosting-side HTTPS and canonical-hostname setup for mdbrown.dev.
+#
+# None of this is checkable from the repo: the redirects live in Cloudflare, and
+# the certificates come from Cloudflare (edge) and GitHub Pages (origin). This
+# script re-runs the checks by hand so a dashboard change -- or a silent revert
+# -- shows up as a failure instead of as a Search Console report weeks later.
+#
+# Usage:
+#   script/check-https                 # check mdbrown.dev
+#   script/check-https example.com     # check some other domain
+#
+# Exits non-zero if any CHECK fails. NOTEs are informational and never affect
+# the exit code.
+
+set -uo pipefail
+
+DOMAIN="${1:-mdbrown.dev}"
+# The *.github.io host that Pages redirects to the custom domain. Only used for
+# the inbound-link check, so a wrong value here fails loudly rather than
+# silently passing.
+PAGES_HOST="${PAGES_HOST:-m-d-brown.github.io}"
+# A path that exists on the site, used to prove redirects carry the path
+# through rather than dumping every deep link on the home page.
+DEEP_PATH="${DEEP_PATH:-/about}"
+
+# GitHub Pages' published IPs. Any one of them serves the same certificate;
+# this is only used to inspect what the origin presents.
+PAGES_IP="${PAGES_IP:-185.199.108.153}"
+
+if [ -t 1 ]; then
+  R=$'\e[31m'; G=$'\e[32m'; Y=$'\e[33m'; DIM=$'\e[2m'; B=$'\e[1m'; N=$'\e[0m'
+else
+  R=''; G=''; Y=''; DIM=''; B=''; N=''
+fi
+
+pass=0; fail=0
+
+section() { printf '\n%s%s%s\n' "$B" "$1" "$N"; }
+
+ok()   { pass=$((pass+1)); printf '  %sPASS%s %s\n' "$G" "$N" "$1"; }
+bad()  { fail=$((fail+1)); printf '  %sFAIL%s %s\n' "$R" "$N" "$1"
+         [ $# -gt 1 ] && printf '       %sgot: %s%s\n' "$DIM" "$2" "$N"; }
+note() { printf '  %sNOTE%s %s\n' "$Y" "$N" "$1"; }
+
+# Emits the response headers for a single request, with the status code
+# appended as a parseable trailer. One request, both facts.
+head_of() {
+  curl -sS --max-time 20 -o /dev/null -D - -w 'HTTPCODE=%{http_code}\n' "$1" 2>/dev/null
+}
+status_of() { printf '%s' "$1" | sed -n 's/^HTTPCODE=//p' | tail -1; }
+# Header values arrive CRLF-terminated and the name's case varies between
+# HTTP/1.1 and HTTP/2, hence the tr and the case-insensitive match.
+header_of() {
+  printf '%s' "$1" | tr -d '\r' | awk -v k="$(printf '%s' "$2" | tr 'A-Z' 'a-z')" \
+    'tolower($1) == k":" { $1=""; sub(/^ /,""); print }' | tail -1
+}
+
+# Asserts that URL answers with a redirect to exactly EXPECTED.
+expect_redirect() {
+  local url="$1" expected="$2" h code loc
+  h=$(head_of "$url"); code=$(status_of "$h"); loc=$(header_of "$h" Location)
+  if [ "$code" != "301" ] && [ "$code" != "308" ]; then
+    bad "$url -> $expected" "status $code (want 301/308)"
+  elif [ "$loc" != "$expected" ]; then
+    bad "$url -> $expected" "Location: ${loc:-<none>}"
+  else
+    ok "$url ${DIM}->${N} $expected ${DIM}($code)${N}"
+  fi
+}
+
+expect_status() {
+  local url="$1" want="$2" code
+  code=$(status_of "$(head_of "$url")")
+  [ "$code" = "$want" ] && ok "$url ${DIM}($code)${N}" \
+    || bad "$url expected $want" "status $code"
+}
+
+section "1. http:// is redirected to https:// (Cloudflare 'Always Use HTTPS')"
+expect_redirect "http://$DOMAIN/" "https://$DOMAIN/"
+expect_redirect "http://$DOMAIN$DEEP_PATH" "https://$DOMAIN$DEEP_PATH"
+
+section "2. www is redirected to the apex, on both schemes"
+expect_redirect "https://www.$DOMAIN/" "https://$DOMAIN/"
+expect_redirect "http://www.$DOMAIN/" "https://$DOMAIN/"
+
+section "3. the www redirect carries path and query through"
+# A rule that drops these would send every deep www link to the home page,
+# which Google reads as a soft 404 rather than as a redirect.
+expect_redirect "https://www.$DOMAIN$DEEP_PATH" "https://$DOMAIN$DEEP_PATH"
+expect_redirect "https://www.$DOMAIN/?utm_source=x&b=2" "https://$DOMAIN/?utm_source=x&b=2"
+
+section "4. the www redirect is answered at the edge, not by the origin"
+# This is what makes the redirect immune to the origin certificate problem in
+# section 6: if Cloudflare answers without contacting GitHub, GitHub's cert is
+# never validated and cannot 526. Origin-served responses carry these headers.
+www_head=$(head_of "https://www.$DOMAIN/")
+if printf '%s' "$www_head" | grep -qiE '^(x-github-request-id|via|x-served-by)'; then
+  bad "www redirect should not reach the GitHub origin" \
+      "origin headers present (x-github-request-id / via / x-served-by)"
+else
+  ok "no origin headers on the www redirect ${DIM}(pure Cloudflare)${N}"
+fi
+
+section "5. the canonical host serves the site, and inbound links reach it"
+expect_status "https://$DOMAIN/" 200
+# Ends on https, not http -- this chain used to terminate on the insecure form.
+final=$(curl -sSL --max-time 20 -o /dev/null -w '%{url_effective}' "https://$PAGES_HOST/" 2>/dev/null)
+[ "$final" = "https://$DOMAIN/" ] \
+  && ok "https://$PAGES_HOST/ ${DIM}->${N} $final" \
+  || bad "https://$PAGES_HOST/ should end at https://$DOMAIN/" "$final"
+
+section "6. TLS: edge certificate vs origin certificate"
+edge_sans=$(echo | openssl s_client -connect "$DOMAIN:443" -servername "$DOMAIN" 2>/dev/null \
+  | openssl x509 -noout -ext subjectAltName 2>/dev/null | tail -1 | sed 's/^ *//')
+if printf '%s' "$edge_sans" | grep -q "DNS:$DOMAIN"; then
+  ok "edge cert covers $DOMAIN ${DIM}(${edge_sans})${N}"
+else
+  bad "edge cert does not cover $DOMAIN" "${edge_sans:-<none>}"
+fi
+
+# Informational: GitHub Pages cannot present a cert for the custom domain while
+# Cloudflare proxies the ACME challenge, so it falls back to *.github.io. This
+# is why SSL/TLS mode must not be 'Full (strict)' -- strict validates this cert
+# against the requested hostname and fails it. Recorded here so the reason is
+# visible the next time someone wonders why strict is off.
+origin_cn=$(echo | openssl s_client -connect "$PAGES_IP:443" -servername "$DOMAIN" 2>/dev/null \
+  | openssl x509 -noout -subject 2>/dev/null | sed 's/^subject= *//')
+note "origin (GitHub Pages) presents: ${origin_cn:-<unavailable>}"
+note "  ^ expected to NOT cover $DOMAIN; keep Cloudflare SSL/TLS on 'Full', not 'Full (strict)'"
+
+# 'Full (strict)' would 526 the apex the same way it used to 526 www. A 200
+# above therefore rules strict out -- but Full vs Flexible is indistinguishable
+# from outside, and Flexible sends Cloudflare->origin traffic in the clear.
+note "'Full (strict)' is ruled out by the 200 in section 5; confirm Full (not Flexible) in the dashboard"
+
+section "7. Advisory"
+hsts=$(header_of "$(head_of "https://$DOMAIN/")" Strict-Transport-Security)
+[ -n "$hsts" ] && note "HSTS: $hsts" || note "HSTS not set (optional; hard to undo once browsers cache it)"
+
+# Deliberately not asserted. Cloudflare's Automatic Setup skips HTML rewriting
+# for non-browser clients, and it does not inject for curl even when curl sends
+# a browser User-Agent string -- the decision uses more than the UA. A curl
+# check here would fail permanently while the beacon works fine for real
+# visitors, so verify it in a browser instead.
+note "Web Analytics beacon is not checkable from curl. In a browser devtools console:"
+note "  ${DIM}!!document.querySelector('[data-cf-beacon]')${N}"
+
+printf '\n%s%d passed, %d failed%s\n' "$B" "$pass" "$fail" "$N"
+[ "$fail" -eq 0 ] || exit 1

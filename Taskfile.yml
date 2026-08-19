@@ -97,6 +97,15 @@ tasks:
     cmds:
       - npm run build
 
+  check-https:
+    desc:
+      "Verify the live redirect/TLS setup (Cloudflare + Pages), which lives
+      outside this repo"
+    # No deps: this checks the deployed site, so it must not need node_modules
+    # or a build. Takes an optional domain, e.g. `task check-https -- example.com`.
+    cmds:
+      - ./script/check-https {{.CLI_ARGS}}
+
   ci-build:
     desc:
       "Reproduce the CI build locally (clean install + build; engine-strict
