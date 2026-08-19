@@ -19,13 +19,21 @@ export async function getStaticPaths() {
   // schema in src/content.config.ts. `entry.id` is the filename-derived slug
   // ("time_machine_uchg_smb"); `entry.data` is the typed frontmatter.
   const writeups = await getCollection('writeups');
-  return writeups.map((entry) => ({
+  // Newest first, matching the home page's order, so "newer/older" below means
+  // the same thing in both places.
+  writeups.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  return writeups.map((entry, i) => ({
     params: { slug: entry.id },
-    props: { entry },
+    // Neighbours are resolved here rather than in the page body because
+    // getCollection() would otherwise have to run again for every page just to
+    // rediscover an ordering this function already computed.
+    // Both are undefined at the ends of the list (writeups[-1] and
+    // writeups[length]), which the markup below already handles.
+    props: { entry, newer: writeups[i - 1], older: writeups[i + 1] },
   }));
 }
 
-const { entry } = Astro.props;
+const { entry, newer, older } = Astro.props;
 // render() compiles the markdown body into `Content`, an Astro component that
 // gets rendered as <Content /> in the markup below.
 const { Content } = await render(entry);
@@ -49,25 +57,47 @@ const lead = entry.data.image
   : undefined;
 
 const canonical = new URL(`/${entry.id}`, Astro.site).toString();
+const home = new URL('/', Astro.site).toString();
+
+// `@graph` holds several independent objects under one @context, which is how
+// you attach more than one type to a page without emitting a second script
+// tag. Everything Default.astro receives as `schema` is serialized verbatim.
 const schema = {
   '@context': 'https://schema.org',
-  '@type': 'TechArticle',
-  headline: entry.data.title,
-  description: entry.data.description,
-  datePublished: isoDate,
-  ...(isoUpdated && { dateModified: isoUpdated }),
-  author: {
-    '@type': 'Person',
-    name: 'Matt Brown',
-    url: new URL('/about', Astro.site).toString(),
-  },
-  publisher: {
-    '@type': 'Person',
-    name: 'Matt Brown',
-  },
-  mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
-  url: canonical,
-  ...(lead && { image: new URL(lead.src, Astro.site).toString() }),
+  '@graph': [
+    {
+      '@type': 'TechArticle',
+      headline: entry.data.title,
+      description: entry.data.description,
+      datePublished: isoDate,
+      ...(isoUpdated && { dateModified: isoUpdated }),
+      author: {
+        '@type': 'Person',
+        name: 'Matt Brown',
+        url: new URL('/about', Astro.site).toString(),
+      },
+      publisher: {
+        '@type': 'Person',
+        name: 'Matt Brown',
+      },
+      mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+      url: canonical,
+      // Ties the article back to the WebSite entity declared on the home page,
+      // so the two aren't read as unrelated things that happen to share a host.
+      isPartOf: { '@type': 'WebSite', '@id': home, name: 'mdbrown.dev' },
+      ...(lead && { image: new URL(lead.src, Astro.site).toString() }),
+    },
+    // Tells Google the page sits under the index rather than floating loose,
+    // and is what lets a result render "mdbrown.dev › Writeups" instead of a
+    // bare URL.
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Writeups', item: home },
+        { '@type': 'ListItem', position: 2, name: entry.data.title },
+      ],
+    },
+  ],
 };
 ---
 
@@ -94,4 +124,28 @@ const schema = {
     }
   </p>
   <Content />
+
+  {/* Every writeup was previously a dead end: nothing linked out of it except
+      the site title and the footer. These give each post inbound links from
+      its neighbours, so no page depends on the index alone to be reached, and
+      the anchor text describes what's on the other end. */}
+  <nav class="post-nav" aria-label="More writeups">
+    {
+      newer && (
+        <p>
+          <span>Newer</span>
+          <a href={`/${newer.id}`}>{newer.data.title}</a>
+        </p>
+      )
+    }
+    {
+      older && (
+        <p>
+          <span>Older</span>
+          <a href={`/${older.id}`}>{older.data.title}</a>
+        </p>
+      )
+    }
+    <p><span>All</span><a href="/">Every writeup on the site</a></p>
+  </nav>
 </Default>

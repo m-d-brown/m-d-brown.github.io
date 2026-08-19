@@ -4,9 +4,13 @@
 import Default from '../layouts/Default.astro';
 ---
 
+{/* GitHub Pages serves this with a real 404 status, which is already enough to
+    keep it out of the index. noindex is belt-and-braces: it also covers the
+    page being fetched directly at /404, which does return 200. */}
 <Default
   title="Page not found"
   description="That page doesn't exist. A list of every writeup on the site is one click away."
+  noindex
 >
   <h1>Page not found</h1>
   <p>

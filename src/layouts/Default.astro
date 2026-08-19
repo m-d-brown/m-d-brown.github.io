@@ -66,7 +66,18 @@ const imageURL = imagePath
     <title>{pageTitle}</title>
     {description && <meta name="description" content={description} />}
     <meta name="author" content={author} />
-    {noindex && <meta name="robots" content="noindex, follow" />}
+    {/* Without an explicit directive Google applies conservative defaults:
+        a ~160-char snippet cap and thumbnail-sized image previews. These are
+        opt-ins, not ranking factors — they widen how much of an indexed page
+        can actually appear in a result. */}
+    <meta
+      name="robots"
+      content={
+        noindex
+          ? 'noindex, follow'
+          : 'index, follow, max-snippet:-1, max-image-preview:large'
+      }
+    />
     <link rel="canonical" href={canonicalURL} />
     <link
       rel="preload"
@@ -86,6 +97,7 @@ const imageURL = imagePath
     <meta property="og:type" content={publishedTime ? 'article' : 'website'} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:site_name" content={siteTitle} />
+    <meta property="og:locale" content="en_US" />
     {description && <meta property="og:description" content={description} />}
     {imageURL && <meta property="og:image" content={imageURL} />}
     {
@@ -129,6 +141,10 @@ const imageURL = imagePath
 
         <hr />
         <footer>
+          {/* The index is otherwise reachable only from the site title in the
+              header. A second, labelled path to it is one more crawlable link
+              into the page that lists every writeup. */}
+          <a href="/">Writeups</a> ·
           <a href="/about">About</a> ·
           <a href="/rss.xml">RSS</a> ·
           <a href="https://github.com/m-d-brown" class="github-link"

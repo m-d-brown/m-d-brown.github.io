@@ -20,8 +20,12 @@ const fmt = new Intl.DateTimeFormat('en-US', {
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
+  // Each writeup's `isPartOf` points at this @id, which is what joins the
+  // article nodes and this one into a single site entity. Must stay identical
+  // to the `home` URL built in [slug].astro.
+  '@id': new URL('/', Astro.site).toString(),
   name: 'mdbrown.dev',
-  url: Astro.site?.toString(),
+  url: new URL('/', Astro.site).toString(),
   author: {
     '@type': 'Person',
     name: 'Matt Brown',
@@ -40,6 +44,11 @@ const schema = {
     With the hope that they might help others, solutions
     to problems I've faced:
   </p>
+  {/* The description under each link is the same string the post uses for its
+      meta description. Repeating it here costs nothing to maintain, tells a
+      reader which writeup they want without a round trip, and turns this page
+      from a bare list of titles into one that actually says what the site
+      covers. */}
   <ul class="post-list">
     {
       writeups.map((w) => (
@@ -47,7 +56,14 @@ const schema = {
           <time datetime={w.data.date.toISOString().slice(0, 10)}>
             {fmt.format(w.data.date)}
           </time>
-          <a href={`/${w.id}`}>{w.data.title}</a>
+          {/* Title and summary share one flex item so the summary lines up
+              under the title automatically, instead of via a left margin that
+              would have to re-derive the date column's width in the summary's
+              own (smaller) em. */}
+          <div class="post-entry">
+            <a href={`/${w.id}`}>{w.data.title}</a>
+            <p class="post-summary">{w.data.description}</p>
+          </div>
         </li>
       ))
     }

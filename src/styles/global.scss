@@ -183,6 +183,22 @@ footer {
     color: $taupe;
     min-width: 6.5em;
   }
+  // Takes the width left over after the date column, and stacks the title and
+  // summary, which is what keeps the two left-aligned with each other.
+  // `min-width: 0` lets it shrink below its content's intrinsic width, so a
+  // long title wraps instead of pushing the row wider than the page.
+  .post-entry {
+    flex: 1;
+    min-width: 0;
+  }
+  // !important for the same reason as the rules above it: `#main_content p`
+  // carries an ID and would otherwise win on specificity.
+  .post-summary {
+    margin: 0.15em 0 0 !important;
+    font-size: 0.9em;
+    line-height: 1.45;
+    color: rgba($primary-text, 0.75);
+  }
 }
 
 .post-date {
@@ -191,6 +207,33 @@ footer {
   color: $taupe;
   margin-top: -0.5em;
   margin-bottom: $spacing-unit !important;
+}
+
+// Neighbour links at the foot of each writeup. Selector is scoped to
+// #main_content so it outranks that block's generic `p` margin without
+// resorting to !important.
+#main_content .post-nav {
+  margin-top: 2.5em;
+  padding-top: 1.25em;
+  border-top: 1px solid rgba($border-color, 0.3);
+  font-size: 0.95em;
+
+  p {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75em;
+    margin-bottom: 0.4em;
+  }
+  // The "Newer"/"Older"/"All" label. Same width and face as the date column on
+  // the index, so the two lists read as the same kind of thing.
+  span {
+    flex-shrink: 0;
+    min-width: 4em;
+    font-family: $font-code;
+    font-size: 0.85em;
+    color: $taupe;
+  }
 }
 
 // ─── 5. Components ───────────────────────────────────────────────────────────

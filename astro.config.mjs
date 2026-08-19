@@ -37,6 +37,13 @@ for (const file of readdirSync(WRITEUPS)) {
   if (stamp) lastmodBySlug.set(file.replace(/\.md$/, ''), stamp);
 }
 
+// The home page is a generated index of the writeups, so it genuinely changes
+// whenever the newest one does. Without this it would ship no <lastmod> at all
+// and Google would have no signal that a new post is listed there. The empty
+// string is the home page's slug — see the pathname stripping in serialize().
+const newest = [...lastmodBySlug.values()].sort().pop();
+if (newest) lastmodBySlug.set('', newest);
+
 export default defineConfig({
   // Read by Astro.site and used to build absolute URLs (canonical, og:, RSS,
   // sitemap). Getting it wrong silently poisons all of them.
@@ -52,8 +59,13 @@ export default defineConfig({
         // https://mdbrown.dev/lldpd_proxmox_unifi -> lldpd_proxmox_unifi
         const slug = new URL(item.url).pathname.replace(/^\/|\/$/g, '');
         const stamp = lastmodBySlug.get(slug);
-        // Non-writeups (/, /about) aren't in the table and get no lastmod,
-        // which is valid — the element is optional.
+        // /about isn't in the table and gets no lastmod, which is valid — the
+        // element is optional.
+        //
+        // The home entry's loc is "https://mdbrown.dev" while its canonical is
+        // "https://mdbrown.dev/". Don't try to reconcile them: an empty path
+        // is equivalent to "/" per RFC 3986, the integration normalizes the
+        // slash back off anyway, and Google resolves both to one URL.
         return stamp ? { ...item, lastmod: `${stamp}T00:00:00.000Z` } : item;
       },
     }),
